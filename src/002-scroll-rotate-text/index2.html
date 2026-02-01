@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scroll Rotate Text</title>
+  <style>
+    body {
+      margin: 0;
+    }
+
+    header,
+    footer {
+      height: 100vh;
+      background: #793dd2;
+    }
+
+    .container {
+      background: #272727;
+      color: white;
+      height: 100vh;
+      overflow: clip;
+      position: relative;
+      perspective: 1000px;
+    }
+
+    .wrapper {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      display: grid;
+      justify-content: center;
+      align-items: center;
+      animation: rotate both;
+      animation-timeline: view();
+      animation-range: cover -10% cover 220%;
+    }
+
+    @keyframes rotate {
+      from {
+        transform: rotateX(-90deg);
+      }
+
+      to {
+        transform: rotateX(180deg);
+      }
+    }
+
+    .item {
+      grid-area: 1/1;
+      text-align: center;
+      font-size: 4vmax;
+      font-family: sans-serif;
+      font-weight: 500;
+      text-transform: uppercase;
+      transition: 0.3s;
+      backface-visibility: hidden;
+      --radius: 40vh;
+      --angle: calc((90deg / sibling-count()) * (sibling-index() - 1));
+      transform:
+        translate3d(0,
+          calc(sin(var(--angle)) * var(--radius)),
+          calc(cos(var(--angle)) * var(--radius))) rotateX(calc(var(--angle) * -1));
+    }
+  </style>
+</head>
+
+<body>
+  <header></header>
+
+  <div class="container">
+    <div class="wrapper">
+      <div class="item">Adventure</div>
+      <div class="item">Breeze</div>
+      <div class="item">Crystal</div>
+      <div class="item">Dusk</div>
+      <div class="item">Echo</div>
+      <div class="item">Frost</div>
+      <div class="item">Glimmer</div>
+      <div class="item">Harmony</div>
+      <!-- <div class="item">Illusion</div>
+      <div class="item">Journey</div>  -->
+    </div>
+  </div>
+
+  <footer></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.3.17/dist/lenis.min.js"></script>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Initialize a new Lenis instance for smooth scrolling
+    const lenis = new Lenis();
+
+    // Synchronize Lenis scrolling with GSAP's ScrollTrigger plugin
+    lenis.on('scroll', ScrollTrigger.update);
+
+    // Add Lenis's requestAnimationFrame (raf) method to GSAP's ticker
+    // This ensures Lenis's smooth scroll animation updates on each GSAP tick
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000); // Convert time from seconds to milliseconds
+    });
+
+    // Disable lag smoothing in GSAP to prevent any delay in scroll animations
+    gsap.ticker.lagSmoothing(0);
+
+    // Main Stuff 
+
+  </script>
+</body>
+
+</html>
