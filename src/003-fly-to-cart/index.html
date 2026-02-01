@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fly To Cart</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 5%;
+      background: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .cart-icon {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 0 5%;
+    }
+
+    .products-grid {
+      min-height: calc(100vh - 68px);
+      display: flex;
+      gap: 50px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .product-card {
+      width: 300px;
+      border: 1px solid #eee;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .product-info {
+      padding: 1.5rem;
+    }
+
+    .product-title {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.25rem;
+      color: #333;
+    }
+
+    .product-description {
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .add-to-cart-btn {
+      width: 100%;
+      padding: 0.8rem;
+      background: #333;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+
+    .add-to-cart-btn:hover {
+      opacity: 0.8;
+    }
+
+    .fly-element {
+      position: fixed;
+      left: 0;
+      top: 0;
+      transform: translate(var(--x, 0), var(--y, 0)) scale(var(--scale, 1));
+      z-index: calc(Infinity);
+      pointer-events: none;
+      border-radius: 50%;
+      transition: opacity 0.15s ease;
+
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="logo">Fly to Cart</div>
+    <div id="cart-icon" class="cart-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="9" cy="21" r="1"></circle>
+        <circle cx="20" cy="21" r="1"></circle>
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+      </svg>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="products-grid">
+      <div class="product-card">
+        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop" alt="Product"
+          class="product-image">
+        <div class="product-info">
+          <h3 class="product-title">Minimalist Watch</h3>
+          <p class="product-description">A clean and elegant timepiece for everyday wear.</p>
+          <button class="add-to-cart-btn">
+            Add to Cart
+          </button>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop" alt="Product"
+          class="product-image">
+        <div class="product-info">
+          <h3 class="product-title">Wireless Headphones</h3>
+          <p class="product-description">Premium sound quality with noise cancellation technology.</p>
+          <button class="add-to-cart-btn">
+            Add to Cart
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import gsap from 'https://cdn.skypack.dev/gsap@3.14.1/dist/gsap.min.js';
+    import MotionPathPlugin from 'https://cdn.skypack.dev/gsap@3.14.1/dist/MotionPathPlugin.min.js';
+
+    gsap.registerPlugin(MotionPathPlugin)
+
+    const btns = document.querySelectorAll('.add-to-cart-btn');
+
+    btns.forEach(btn => {
+      btn.addEventListener('click', function () {
+        const btnCoords = btn.getBoundingClientRect();
+        const cartIcon = document.querySelector('.cart-icon');
+        const cartCoords = cartIcon.getBoundingClientRect();
+        const productImg = btn.closest('.product-card').querySelector('.product-image');
+
+        const flyElement = document.createElement('div');
+        const flyElementSize = 50;
+
+        const startPoint = {
+          x: btnCoords.left + btnCoords.width / 2 - flyElementSize / 2,
+          y: btnCoords.top + btnCoords.height / 2 - flyElementSize / 2
+        }
+
+        const endPoint = {
+          x: cartCoords.left + cartCoords.width / 2 - flyElementSize / 2,
+          y: cartCoords.top + cartCoords.height / 2 - flyElementSize / 2
+        }
+
+        const controlPoint1 = { x: startPoint.x, y: startPoint.y - 200 };
+        const controlPoint2 = { x: endPoint.x - 300, y: endPoint.y - 100 };
+
+        flyElement.classList.add('fly-element');
+        flyElement.style.width = `${flyElementSize}px`;
+        flyElement.style.height = `${flyElementSize}px`;
+        flyElement.style.background = `url(${productImg.src}) center center / cover no-repeat`;
+        flyElement.style.setProperty('--x', `${startPoint.x}px`);
+        flyElement.style.setProperty('--y', `${startPoint.y}px`);
+        document.body.appendChild(flyElement);
+
+        // METHOD 1: Using MotionPath
+        // gsap.to(flyElement, {
+        //   motionPath: {
+        //     path: [startPoint, controlPoint1, controlPoint2, endPoint],
+        //     type: "cubic",
+        //   },
+        //   scale: 0.5,
+        //   duration: 0.6,
+        //   ease: "none",
+        //   onComplete: () => {
+        //     flyElement.style.opacity = 0;
+        //     setTimeout(() => flyElement.remove(), 300);
+        //   },
+        // })
+
+        // METHOD 2: Vanilla
+        const duration = 600;
+        let startTime = null;
+        function animate(currentTime) {
+          if (!startTime) startTime = currentTime;
+          const progress = Math.min((currentTime - startTime) / duration, 1);
+          console.log(progress);
+
+          const { x, y } = getBezierPoint(progress, startPoint, controlPoint1, controlPoint2, endPoint);
+
+          flyElement.style.setProperty('--x', `${x}px`);
+          flyElement.style.setProperty('--y', `${y}px`);
+          flyElement.style.setProperty('--scale', `${1 - progress * 0.5}`);
+
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          } else {
+            flyElement.style.opacity = 0;
+            setTimeout(() => flyElement.remove(), 300);
+          }
+        }
+        requestAnimationFrame(animate);
+      })
+    })
+
+    // create a function to get the position on the Bezier curve
+    function getBezierPoint(t, p0, p1, p2, p3) {
+      const invT = 1 - t;
+      const x = Math.pow(invT, 3) * p0.x + 3 * Math.pow(invT, 2) * t * p1.x + 3 * invT * Math.pow(t, 2) * p2.x + Math.pow(t, 3) * p3.x;
+      const y = Math.pow(invT, 3) * p0.y + 3 * Math.pow(invT, 2) * t * p1.y + 3 * invT * Math.pow(t, 2) * p2.y + Math.pow(t, 3) * p3.y;
+      return { x, y };
+    }
+  </script>
+
+</body>
+
+</html>
