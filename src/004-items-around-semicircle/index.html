@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auto-Place Items Around Semicircle</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 84px 0 0;
+      box-sizing: border-box;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: system-ui, sans-serif;
+      background: #fbf9f1;
+    }
+
+    .semicircle-container {
+      --semicircle-radius: 240px;
+      height: var(--semicircle-radius);
+      display: grid;
+      place-items: center;
+
+      @media (max-width: 670px) {
+        --semicircle-radius: 120px;
+      }
+    }
+
+    .semicircle {
+      grid-area: 1 / 1;
+      width: calc(var(--semicircle-radius) * 2);
+      aspect-ratio: 1;
+      background: #272625;
+      border-radius: 50%;
+      clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
+    }
+
+    ul {
+      grid-area: 1 / 1;
+      padding: 0;
+      margin: 0;
+      display: grid;
+    }
+
+    li {
+      --sibling-index: sibling-index();
+      --sibling-count: sibling-count();
+      --distance: calc(var(--semicircle-radius) + 60px);
+      --start-angle: -5.5deg;
+      --arc-span: calc(-180deg - var(--start-angle) * 2);
+      --angle: calc(var(--start-angle) + var(--arc-span) * (var(--sibling-index) - 1) / (var(--sibling-count) - 1));
+
+      &:only-child {
+        --angle: -90deg;
+      }
+
+      grid-area: 1 / 1;
+      display: grid;
+      place-items: center;
+      width: 58px;
+      aspect-ratio: 1;
+      font-size: 18px;
+      color: white;
+      background: oklch(0.65 0.25 calc(173 + ((var(--sibling-index) - 1) * 40)));
+      border-radius: 50%;
+      user-select: none;
+      translate: calc(cos(var(--angle)) * var(--distance)) calc(sin(var(--angle)) * var(--distance));
+      transition: 150ms ease-out;
+
+      @media (max-width: 670px) {
+        --start-angle: -7.5deg;
+        --distance: calc(var(--semicircle-radius) + 40px);
+        width: 40px;
+        font-size: 16px;
+      }
+    }
+
+    button {
+      margin: 60px 15px 0;
+      border: none;
+      padding: 15px 20px;
+      font-size: 16px;
+      color: #272625;
+      background: #faba5f;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 400;
+      letter-spacing: 0.25px;
+      outline-color: currentColor;
+      -webkit-tap-highlight-color: transparent;
+      transition: 150ms cubic-bezier(.4, 0, .2, 1);
+
+      &:active {
+        scale: 0.97;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="semicircle-container">
+    <div class="semicircle"></div>
+    <ul>
+      <li>1</li>
+      <li>2</li>
+      <li>3</li>
+      <li>4</li>
+      <li>5</li>
+      <li>6</li>
+    </ul>
+  </div>
+
+  <div>
+    <button onclick="addItem()">Add Item</button>
+    <button onclick="removeItem()">Remove Item</button>
+  </div>
+
+  <script>
+    const itemsContainer = document.querySelector("ul");
+
+    function addItem() {
+      const item = document.createElement("li");
+      item.textContent = itemsContainer.children.length + 1;
+      item.style.opacity = 0;
+      item.style.scale = 0.5;
+      itemsContainer.append(item);
+
+      applySiblingIndexFallback();
+
+      setTimeout(() => {
+        item.style.opacity = 1;
+        item.style.scale = 1;
+      }, 150);
+    }
+
+    function removeItem() {
+      if (itemsContainer.children.length < 1) return;
+
+      const item = itemsContainer.lastElementChild;
+      item.style.opacity = 0;
+      item.style.scale = 0.5;
+
+      setTimeout(() => {
+        itemsContainer.removeChild(item);
+        applySiblingIndexFallback();
+      }, 150);
+    }
+
+    function applySiblingIndexFallback() {
+      const isWebkit = "GestureEvent" in window;
+      if (CSS.supports("top", "calc(sibling-index() * 1px)") && !isWebkit) return;
+
+      const items = document.querySelectorAll("li");
+      items.forEach((item, i) => {
+        item.style.setProperty("--sibling-index", i + 1);
+        item.style.setProperty("--sibling-count", items.length);
+      });
+    }
+    applySiblingIndexFallback();
+  </script>
+</body>
+
+</html>
