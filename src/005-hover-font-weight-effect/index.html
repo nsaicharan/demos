@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Hover Font-Weight Effect</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+    rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      height: 100svh;
+      display: grid;
+      place-items: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      font-size: min(8vw, 138px);
+      font-weight: 175;
+      cursor: default;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Enjoy Experimenting <br> With the Hover Effect</h1>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/SplitText.min.js"></script>
+  <script>
+    gsap.registerPlugin(SplitText);
+    const split = SplitText.create("h1", { type: "chars", charsClass: 'char' });
+
+    const MAX_DISTANCE = 250;
+    const MIN_FONT_WEIGHT = 175;
+    const MAX_FONT_WEIGHT = 900;
+
+    document.addEventListener('mousemove', (e) => {
+      const mouseX = e.pageX;
+      const mouseY = e.pageY;
+
+      const chars = document.querySelectorAll('.char');
+
+      chars.forEach(char => {
+        const charRect = char.getBoundingClientRect();
+        const charCenterX = charRect.left + charRect.width / 2 + window.scrollX;
+        const charCenterY = charRect.top + charRect.height / 2 + window.scrollY;
+
+        const distance = Math.sqrt(
+          Math.pow(mouseX - charCenterX, 2) + Math.pow(mouseY - charCenterY, 2)
+        );
+
+        const fontWeight = distance < MAX_DISTANCE
+          ? gsap.utils.mapRange(0, MAX_DISTANCE, MIN_FONT_WEIGHT, MAX_FONT_WEIGHT, MAX_DISTANCE - distance)
+          : MIN_FONT_WEIGHT;
+
+        gsap.to(char, { fontWeight, duration: 0.5 })
+      })
+    });
+  </script>
+</body>
+
+</html>
