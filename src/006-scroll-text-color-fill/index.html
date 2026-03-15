@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scroll Text Fill Effect</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+    rel="stylesheet">
+  <title>Text Color Fill on Scroll</title>
+  <style>
+    html {
+      color-scheme: light dark;
+      --bg-color: light-dark(#fafafa, #100f0f);
+      --text-color: light-dark(#100f0f, #fafafa);
+      background: var(--bg-color);
+      color: var(--text-color);
+      font-family: Inter, system-ui, sans-serif;
+      font-optical-sizing: auto;
+    }
+
+    body {
+      margin-inline: auto;
+      width: min(calc(100% - 50px), 992px);
+      text-align: center;
+    }
+
+    h1 {
+      margin: calc(100svh - 3.34lh) 0 0;
+      font-weight: 800;
+      font-size: clamp(64px, 9vw, 96px);
+      line-height: 1;
+      text-wrap: balance;
+    }
+
+    .para {
+      margin: 48px 0 calc(100vh - 1.5lh);
+      font-size: clamp(28px, 4.5vw, 43px);
+      line-height: 1.5;
+      text-wrap: pretty;
+    }
+
+    .para .char {
+      color: transparent;
+      background-clip: text;
+      background-image: linear-gradient(to right,
+          var(--text-color) var(--gradient-offset, 0%),
+          rgb(from var(--text-color) r g b / 0.25) var(--gradient-offset, 0%));
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Text Color Fill on Scroll</h1>
+
+  <p class="para">
+    Scroll down to see the text gradually fill with color. Each character is
+    animated individually using GSAP, creating a smooth reading progression
+    that responds directly to the scroll position. This technique can be used
+    to add subtle storytelling or emphasis to text.
+  </p>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/SplitText.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/ScrollTrigger.min.js"></script>
+
+<script>
+  gsap.registerPlugin(SplitText, ScrollTrigger);
+
+  const para = document.querySelector(".para");
+
+  const split = new SplitText(para, {
+    type: ["words", "chars"],
+    wordsClass: "word",
+    charsClass: "char"
+  });
+
+  gsap.to(split.chars, {
+    scrollTrigger: {
+      trigger: para,
+      start: "top 82%",
+      end: "bottom 40%",
+      scrub: true
+      // markers: true
+    },
+    "--gradient-offset": "100%",
+    stagger: 0.25
+  });
+
+</script>
+
+</html>
