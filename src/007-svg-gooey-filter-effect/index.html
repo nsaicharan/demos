@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SVG Gooey Filter Effect</title>
+
+  <style>
+    body {
+      margin: 0;
+      height: 100dvh;
+      display: grid;
+      place-items: center;
+    }
+
+    .wrapper {
+      display: flex;
+      gap: 150px;
+      justify-content: center;
+      align-items: center;
+      filter: url('#gooey');
+    }
+
+    .circle {
+      width: 150px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background-color: #0d0f11;
+    }
+
+    .circle-1 {
+      animation: 5s moveRight ease-in-out infinite; 
+    }
+
+    .circle-2 {
+      width: 100px;
+      animation: 5s moveLeft ease-in-out infinite; 
+    }
+
+    @keyframes moveRight {
+      0%,10% {
+        translate: 0 0;
+      }
+
+      30%, 60% {
+        translate: 150px 0;
+      }
+      
+      90%, 100% {
+        translate: 0 0;
+      }
+    }
+
+    @keyframes moveLeft {
+      0%,10% {
+        translate: 0 0;
+      }
+      30%, 60% {
+        translate: -150px 0;
+      }
+      90%,100% {
+        translate: 0 0;
+      }
+    } 
+
+    svg {
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="circle circle-1"></div>
+    <div class="circle circle-2"></div>
+  </div>
+
+  <svg aria-hidden>
+    <defs>
+      <!-- <filter id="gooey" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="20" result="blur" />
+        <feColorMatrix
+          in="blur"
+          type="matrix"
+          values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -10"
+          result="goo"
+        />
+        <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+      </filter> -->
+
+      <filter id="gooey" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="18" result="blur" />
+        <feColorMatrix in="blur" mode="matrix"
+          values="1 0 0 0 0
+                  0 1 0 0 0
+                  0 0 1 0 0
+                  0 0 0 26 -9"
+          result="goo" />
+        <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+      </filter>
+    </defs>
+  </svg>
+</body>
+</html>
