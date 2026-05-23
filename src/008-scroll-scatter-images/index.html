@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scroll Scatter Images</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: peachpuff;
+    }
+
+    .spacer {
+      height: 90dvh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: system-ui;
+      font-size: 5rem;
+      text-align: center;
+      color: #0d0d0d;
+      cursor: default;
+    }
+
+    section {
+      position: relative;
+      height: 100dvh;
+      overflow: clip;
+      background-color: #fff0e5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    h1 {
+      font-family: system-ui;
+      font-size: 5rem;
+      text-align: center;
+      color: #0d0d0d;
+      cursor: default;
+    }
+
+    img {
+      position: absolute;
+      width: 225px;
+      height: 250px;
+      object-fit: cover;
+      border-radius: 20px;
+      scale: 1.3;
+
+      &:nth-of-type(1) {
+        rotate: 5deg;
+        width: 225px;
+        height: 250px;
+      }
+
+      &:nth-of-type(2) {
+        rotate: -5deg;
+        width: 200px;
+        height: 250px;
+      }
+
+      &:nth-of-type(3) {
+        rotate: 10deg;
+        width: 300px;
+        height: 250px;
+      }
+
+      &:nth-of-type(4) {
+        rotate: -10deg;
+        width: 200px;
+        height: 350px;
+      }
+
+      &:nth-of-type(5) {
+        rotate: 15deg;
+        width: 225px;
+        height: 250px;
+      }
+
+      &:nth-of-type(6) {
+        rotate: -15deg;
+        width: 200px;
+        height: 250px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="spacer">
+    scroll down
+  </div>
+
+  <section>
+    <h1>Happiest <br>place on earth</h1>
+
+    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=500&q=80">
+    <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=500&q=80">
+    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=500&q=80">
+    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&q=80">
+    <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=500&q=80">
+    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=500&q=80">
+  </section>
+
+  <div class="spacer">
+    the end
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.3.17/dist/lenis.min.js"></script>
+
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Initialize Lenis smooth scrolling
+    const lenis = new Lenis({
+      duration: 1.2,
+      smooth: true,
+    });
+
+    // Update ScrollTrigger on Lenis scroll
+    lenis.on('scroll', ScrollTrigger.update);
+
+    // Tie Lenis to GSAP's ticker
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000);
+    });
+
+    // Disable GSAP's built-in smoothing to avoid conflicts
+    gsap.ticker.lagSmoothing(0);
+
+
+    const section = document.querySelector('section');
+    const images = document.querySelectorAll('img');
+
+    const imagesPos = [{ x: '7%', y: '9%' }, { x: '90%', y: '15%' }, { x: '10%', y: '45%' }, { x: '50%', y: '70%' }, { x: '80%', y: '54%' }, { x: '54%', y: '8%' },];
+
+
+
+    gsap.to(images, {
+      left: (index) => imagesPos[index].x,
+      top: (index) => imagesPos[index].y,
+      rotate: 0,
+      scale: 1,
+      ease: 'expoScale(0.5,7,none)',
+      // ease: 'back.inOut(2)',
+
+      scrollTrigger: {
+        trigger: section,
+        start: "top 30%",
+        end: "top top",
+        scrub: 1.3,
+        // markers: true,
+        invalidateOnRefresh: true,
+      }
+    })
+  </script>
+</body>
+
+</html>
